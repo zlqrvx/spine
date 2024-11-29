@@ -1,0 +1,41 @@
+#+TITLE: Simple Perl INteractive Evaluation mode for emacs
+#+AUTHOR: Mark Walker
+
+
+* Description
+Simple Perl INteractive Evaluation mode for emacs (SPINE) implements an emacs interface for interactively evaluating perl expressions.
+
+* Installation
+** package-vc-install (for Emacs >= v29)
+If you have emacs version 29 or greater, the easiest way to install this package is with the package-vc-install command:
+#+begin_src emacs-lisp
+(package-vc-install "https://github.com/zlqrvx/spine")
+#+end_src
+
+** local installation (for development or Emacs < v29)
+If you want to hack on the source code, it is best to clone the git repo and add the local directory to your emacs load path. Start by cloning the repo:
+#+begin_src sh
+git clone https://github.com/zlqrvx/spine.git ~/my/elisp/directory/
+#+end_src
+
+Then add the directory to your emacs load path with:
+#+begin_src emacs-lisp
+(add-to-list 'load-path "~/my/elisp/directory/")
+#+end_src
+
+Then you can require the library with:
+#+begin_src emacs-lisp
+(require 'json)
+(require 'spine)
+#+end_src
+
+* Usage
+Once you have installed and loaded spine, you can start using it. Open a perl file and run =M-x spine-mode=. This will start the spine minor mode. To start the interactive repl use the keybinding =C-c C-z= which is bound to =spine-run=. This will start a repl that you can interact with using the following keybindings:
+|-----------------+------------+---------------------------------------------|
+| Command         | Keybinding | Description                                 |
+|-----------------+------------+---------------------------------------------|
+| spine-run       | C-c C-z    | Start the perl server and repl              |
+| spine-eval-dwim | C-c C-c    | Send the current line or region to the repl |
+| spine-eval-sub  | C-c C-s    | Send the current subroutine to the repl     |
+|-----------------+------------+---------------------------------------------|
+
