@@ -170,9 +170,9 @@
   (interactive)
   (let (beg end str)
     (save-excursion
-      (setq beg (point))
+      (setq end (line-end-position))
       (search-backward-regexp (concat "^" *spine-repl-prompt*))
-      (setq end (+ (length *spine-repl-prompt*) (point)))
+      (setq beg (+ (length *spine-repl-prompt*) (line-beginning-position)))
       (setq str (buffer-substring-no-properties beg end))
       (put-text-property beg end 'read-only t)
       (sp-insert-repl-prompt)
