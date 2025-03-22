@@ -47,7 +47,9 @@
 ;; major mode for the repl buffer
 ;;
 (defvar-keymap spine-repl-mode-map
-  "RET" #'spine-repl-send)
+  "RET" #'spine-repl-send
+  "M-p" #'spine-insert-prev-history
+  "M-n" #'spine-insert-next-history)
 
 (define-derived-mode spine-repl-mode
   fundamental-mode "spine"

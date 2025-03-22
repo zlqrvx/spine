@@ -44,6 +44,9 @@
 
 (defvar *spine-inferior-server-command* nil)
 
+(defvar-local spine-repl-history '())
+(defvar-local spine-repl-history-recall-index 0)
+
 (setq *spine-inferior-server-command*
       (if load-file-name
 	  (format "%s %s/spine-server/spine-server.pl" spine-perl-command (file-name-directory load-file-name))
@@ -154,11 +157,11 @@
 
 
 
-(defun sp-insert-repl-prompt ()
+(cl-defun sp-insert-repl-prompt (&optional (newline t))
   (with-current-buffer *spine-repl*
     (let ((inhibit-read-only t))
       (goto-char (point-max))
-      (insert (propertize (concat "\n" *spine-repl-prompt*)
+      (insert (propertize (concat (if newline "\n" "") *spine-repl-prompt*)
 			  'read-only t 'rear-nonsticky t
 			  'font-lock-face '(:foreground "blue"))))))
 
@@ -173,9 +176,33 @@
       (setq str (buffer-substring-no-properties beg end))
       (put-text-property beg end 'read-only t)
       (sp-insert-repl-prompt)
-      (sp-eval-string str)))
+      (sp-eval-string str)
+      (or (string= str "")
+	  (push str spine-repl-history))
+      (setq sp-repl-history-recall-index 0)))
   (goto-char (point-max)))
 
+(defun sp-insert-history (n)
+  (with-current-buffer *spine-repl*
+    (let ((inhibit-read-only t))
+      (goto-char (point-max))
+      (search-backward-regexp (concat "^" *spine-repl-prompt*))
+      (delete-line)
+      (sp-insert-repl-prompt nil)
+      (insert (nth n sp-repl-history)))))
+
+(defun sp-insert-prev-history ()
+  (interactive)
+  (sp-insert-history sp-repl-history-recall-index)
+  (and (< (+ 1 sp-repl-history-recall-index)
+	  (length sp-repl-history))
+       (cl-incf sp-repl-history-recall-index)))
+
+(defun sp-insert-next-history ()
+  (interactive)
+  (and (> sp-repl-history-recall-index 0)
+       (cl-decf sp-repl-history-recall-index)
+       (sp-insert-history sp-repl-history-recall-index)))
 
 (defun sp-listen-filter (proc response)
   (let ((res (json-read-from-string response))
